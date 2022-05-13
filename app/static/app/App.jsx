@@ -106,6 +106,7 @@ function Video({ url, file }) {
       if (response.ok) {
         const blobUrl = URL.createObjectURL(await response.blob());
         setOutputUrl(blobUrl);
+        setLoading(false);
         return;
       }
       alert(`error ${response.status}`);
