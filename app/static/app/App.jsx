@@ -89,6 +89,7 @@ function Video({ url, file }) {
   const [start, setStart] = React.useState(0);
   const [end, setEnd] = React.useState(0);
   const [loading, setLoading] = React.useState(false);
+  const [outputUrl, setOutputUrl] = React.useState("");
 
   const upload = async () => {
     setLoading(true);
@@ -104,8 +105,7 @@ function Video({ url, file }) {
       });
       if (response.ok) {
         const blobUrl = URL.createObjectURL(await response.blob());
-        const new_tab = window.open();
-        new_tab.location.href = blobUrl;
+        setOutputUrl(blobUrl);
         return;
       }
       alert(`error ${response.status}`);
@@ -123,8 +123,8 @@ function Video({ url, file }) {
           onTimeUpdate={handleOnTimeUpdate}
           src={url}
           ref={videoElement}
-          width="750"
-          height="500"
+          width="600"
+          height="400"
           controls
         />
       </div>
@@ -136,6 +136,14 @@ function Video({ url, file }) {
       <button onClick={upload} disabled={loading}>
         Upload
       </button>
+      {outputUrl ? (
+        <div>
+          <div>Output:</div>
+          <div>
+            <video src={outputUrl} width="600" height="400" controls />
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }
@@ -148,8 +156,13 @@ function App() {
     <div className="App">
       <input
         onChange={(e) => {
-          setFileUrl(URL.createObjectURL(e.target.files[0]));
-          setFile(e.target.files[0]);
+          const f = e.target.files[0];
+          if (f.size > 1048576) {
+            alert("File size Greater then 1MiB!");
+            return;
+          }
+          setFileUrl(URL.createObjectURL(f));
+          setFile(f);
         }}
         type={"file"}
         accept="video/*"
