@@ -104,7 +104,8 @@ function Video({ url, file }) {
       });
       if (response.ok) {
         const blobUrl = URL.createObjectURL(await response.blob());
-        window.open(blobUrl, "_blank");
+        const new_tab = window.open();
+        new_tab.location.href = blobUrl;
         return;
       }
       alert(`error ${response.status}`);
